@@ -1,26 +1,27 @@
 ﻿// See https://aka.ms/new-console-template for more information
 //namespace Sork
 //{
+using Sork.Commands;
 namespace Sork;
 
     public class Program
     {
     public static void Main(string[] args)
     {
-        ICommand lol = new LaughCommand();
-        ICommand exit = new ExitCommand();
-        ICommand sing = new SingCommand();
-        ICommand whistle = new WhistleCommand();
-        ICommand dance = new DanceCommand();
+        UserInputOutput io = new UserInputOutput();
+        ICommand lol = new LaughCommand(io);
+        ICommand exit = new ExitCommand(io);
+        ICommand sing = new SingCommand(io);
+        ICommand whistle = new WhistleCommand(io);
+        ICommand dance = new DanceCommand(io);
         List<ICommand> commands = new List<ICommand> { lol, exit, sing, whistle, dance };
       
         do
         { 
-                Console.Write(" > ");
-                string input = Console.ReadLine();
-                input = input.ToLower();
+                io.WritePrompt(" > ");
+                string input = io.ReadInput();
 //convert all input to lowercase
-                input = input.Trim();
+                
                 var result = new CommandResult { RequestExit = false, IsHandled = false };
                 var handled = false;
                 foreach (var command in commands)
@@ -32,15 +33,41 @@ namespace Sork;
                         if (result.RequestExit) {break; }
                     }
                 } 
-                if (!handled) { Console.WriteLine("unknown Command"); }
-                if (result.RequestExit) {break; }          
-         //using foreach to iterate thru list takes care of the else if and else statements except unknown  
-         //    else if (sing.Handles(input)) {if (sing.Execute().RequestExit) { break;}}          
-        //     else if (whistle.Handles(input)) {if (whistle.Execute().RequestExit) { break;}}
-         //    else if (dance.Handles(input)) {if (dance.Execute().RequestExit) { break;}}
-        //     else if (exit.Handles(input)) {if (exit.Execute().RequestExit) { break;}}          
-        //     else { Console.WriteLine("unknown Command"); }
+                if (!handled) { io.WriteMessageLine("unknown Command"); }
+                if (result.RequestExit) {break; }            
          }
         while (true);
     }
 }
+public class UserInputOutput
+{
+    public void WritePrompt(string prompt) 
+    {
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.Write(prompt);
+        Console.ResetColor();
+    }
+    public void WriteMessage(string message) 
+    {
+        Console.Write(message);
+    }
+    public void WriteNoun(string noun) 
+    {
+        Console.ForegroundColor = ConsoleColor.Blue;    
+        Console.Write(noun);
+        Console.ResetColor();
+    }
+    public void WriteMessageLine(string message) 
+    {
+        Console.WriteLine(message);
+    }
+    public string ReadInput() 
+    {
+        return Console.ReadLine().Trim();
+    //everywhere we read input, we trim it
+    }
+    public string ReadKey() 
+    {
+        return Console.ReadKey().KeyChar.ToString();
+    }
+}   
