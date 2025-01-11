@@ -2,6 +2,8 @@
 //namespace Sork
 //{
 using Sork.Commands;
+using Sork.World;
+
 namespace Sork;
 
     public class Program
@@ -9,12 +11,14 @@ namespace Sork;
     public static void Main(string[] args)
     {
         UserInputOutput io = new UserInputOutput();
+        var gameState = GameState.Create(io);
         ICommand lol = new LaughCommand(io);
         ICommand exit = new ExitCommand(io);
         ICommand sing = new SingCommand(io);
         ICommand whistle = new WhistleCommand(io);
         ICommand dance = new DanceCommand(io);
-        List<ICommand> commands = new List<ICommand> { lol, exit, sing, whistle, dance };
+        ICommand move = new MoveCommand(io);
+        List<ICommand> commands = new List<ICommand> { lol, exit, sing, whistle, dance, move };
       
         do
         { 
@@ -29,7 +33,7 @@ namespace Sork;
                     if (command.Handles(input)) 
                     {
                         handled = true;
-                        result = command.Execute();
+                        result = command.Execute(input, gameState);
                         if (result.RequestExit) {break; }
                     }
                 } 

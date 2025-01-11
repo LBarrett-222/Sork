@@ -1,4 +1,5 @@
 namespace Sork.Commands;
+using Sork.World;
 public class LaughCommand : BaseCommand
 //examine a piece of input, then do the command
 //create 2 methods, Handles and Execute
@@ -15,12 +16,25 @@ public class LaughCommand : BaseCommand
     {
         return GetCommandFromInput(userinput) == "lol";
     }
-    public override CommandResult Execute()
+    public override CommandResult Execute(string userinput, GameState gameState)
     //when replaceing void with CommandResult in Execute, we can return a new CommandResult object
     //and the return new CommandResult is the object we're returning
+    //now have access to input string userinput in Execute method
     {
-        io.WriteNoun("You");
-        io.WriteMessageLine(" laugh out loud!");
+        var parameters = GetParametersFromInput(userinput);
+        if (parameters.Length == 0)
+        {
+            io.WriteNoun("You");
+            io.WriteMessageLine(" laugh out loud!");
+        }
+        else
+        {
+            io.WriteNoun("You");
+            io.WriteMessage(" laugh out loud with ");
+            io.WriteNoun(parameters[0]);
+            io.WriteMessageLine("!");
+        }
+    
         return new CommandResult { RequestExit = false, IsHandled = true };
     }
 }
